@@ -1,63 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8"/>  
-<title>React Startup Code</title>
-<style>
-  * {
-  box-sizing: border-box;
-}
-
-body {
-  background: gray;
-}
-
-.search {
-  background: white;
-  position: relative;
-  width: 300px;
-  font-family:Verdana;
-  border-radius:16px;  
-}
-
-.search input {
-  width: 100%;
-  padding: 20px 60px 20px 20px;
-  display: block;
-  font-size: 16px;  
-  border-radius:16px;
-}
-
-.search button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 20px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 4px 8px;
-  z-index: 2;
-}
-
-.search input:focus {
-  color #802;
-}
-
-</style>
+  <meta charset="utf-8"/>
+  <title>React Startup Code</title>
+  <link rel="stylesheet" href="weatherApp.css">
 </head>
 <body>
 <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-
-<form action="Startup.html" method="get">
-  <div class="form-group search">
-    <input type="text" class="input" placeholder="search" name="ort">
-    <button type="submit"><img src='magnify.svg'></button>
-  </div>
-</form>
 
 <div id="content">
 
@@ -65,12 +16,51 @@ body {
 
 <script type="text/babel">
 
-// React since react V4 does not read query parameters so we read query parameter directly
-const urlParams = new URLSearchParams(window.location.search);
-const ort = urlParams.get('ort');
+  // React since react V4 does not read query parameters so we read query parameter directly
+  const urlParams = new URLSearchParams(window.location.search);
+  const ort = urlParams.get('ort');
 
-if(ort!=null) alert(ort);
+  if (ort != null) alert(ort);
 
+  //Content element
+  function App() {
+    return (
+            <Header></Header>
+    );
+  }
+
+  function Header() {
+    return (
+            <header>
+              <div class="header container">
+                <ul>
+                  <li>Home</li>
+                  <li>Citys</li>
+                  <li>About</li>
+                </ul>
+                <SearchBar></SearchBar>
+              </div>
+
+            </header>
+    );
+  }
+
+  function SearchBar() {
+    return (
+            <form action="Startup.html" method="get">
+              <div className="form-group search">
+                <input type="text" className="input" placeholder="search" name="ort"/>
+                <button type="submit"><img src='magnify.svg'/></button>
+              </div>
+            </form>
+    );
+  }
+
+
+  ReactDOM.render(
+          <App />,
+          document.getElementById('content')
+  );
 </script>
 </body>
 </html>

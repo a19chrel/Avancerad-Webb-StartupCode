@@ -1,5 +1,7 @@
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -11,14 +13,14 @@ body {
   position: relative;
   width: 300px;
   font-family:Verdana;
-  border-radius:16px;  
+  border-radius:16px;
 }
 
 .search input {
   width: 100%;
   padding: 20px 60px 20px 20px;
   display: block;
-  font-size: 16px;  
+  font-size: 16px;
   border-radius:16px;
 }
 
@@ -36,5 +38,31 @@ body {
 }
 
 .search input:focus {
-  color #802;
+  color: #802;
+}
+
+header {
+  background: #333;
+  height: 75px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header ul {
+  display: inline-flex;
+  width: 400px;
+  justify-content: space-around;
+}
+
+header ul li{
+  list-style: none;
+}
+
+.container {
+  width: 900px;
+  margin: auto;
 }
