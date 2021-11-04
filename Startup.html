@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <title>React Startup Code</title>
-  <link rel="stylesheet" href="weatherApp.css">
+    <meta charset="utf-8"/>
+    <title>React Startup Code</title>
+    <link rel="stylesheet" href="weatherApp.css">
 </head>
 <body>
 <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
@@ -11,10 +11,10 @@
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
 <form action="Startup.html" method="get">
-  <div class="form-group search">
-    <input type="text" class="input" placeholder="search" name="ort">
-    <button type="submit"><img src='magnify.svg'></button>
-  </div>
+    <div class="form-group search">
+        <input type="text" class="input" placeholder="search" name="ort">
+        <button type="submit"><img src='magnify.svg'></button>
+    </div>
 </form>
 
 <div id="content">
@@ -23,64 +23,204 @@
 
 <script type="text/babel">
 
-  // React since react V4 does not read query parameters so we read query parameter directly
-  const urlParams = new URLSearchParams(window.location.search);
-  const ort = urlParams.get('ort');
+    // React since react V4 does not read query parameters so we read query parameter directly
+    const urlParams = new URLSearchParams(window.location.search);
+    const ort = urlParams.get('ort');
 
-  if (ort != null) alert(ort);
+    if (ort != null) alert(ort);
 
-  //Content element
-  class App extends React.Component {
-    constructor(props) {
-      super(props);
+    //Content element
+    class App extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+
+        render() {
+            return (
+                <div>
+                    <Info data={this.props.info}></Info>
+                    <ForecastList data={this.props.forecastArr}></ForecastList>
+                </div>
+            );
+        }
     }
-    render() {
-      return (
-              <ForecastList data={this.props.forecastArr}></ForecastList>
-      );
-    }
-  }
 
-  class ForecastList extends React.Component {
-    constructor(props) {
-      super(props);
-      console.log(props)
-    }
-    render() {
-      const list = this.props.data.map((obj, index) =>
-          <ForecastListRow key={index} data={obj}></ForecastListRow>
-      );
-      return (
-              <div>{list}</div>
-      );
-    }
-  }
+    class Info extends React.Component {
+        constructor(props) {
+            super(props);
+        }
 
-  class ForecastListRow extends React.Component {
-    constructor(props) {
-      super(props);
+        render() {
+            return (
+                    <div className="info-box flex space-between container">
+                      <div>
+                        <h2>{this.props.data.name}</h2>
+                        <p>{this.props.data.province}, {this.props.data.country}</p>
+                        <p>geo info</p>
+                        <p className="mt-20">
+                          <strong>Postalcode: </strong>
+                          {this.props.data.postalcode}
+                        </p>
+                        <p>
+                          <strong>Climatecode: </strong>
+                          {this.props.data.climatecode}
+                        </p>
+                        <p>
+                          <strong>Areacode: </strong>
+                          {this.props.data.areacode}
+                        </p>
+                      </div>
+                      <div>
+                        <p>{this.props.data.about}</p>
+                      </div>
+                    </div>
+
+            );
+        }
     }
-    render() {
 
-      const listRow = Object.keys(this.props.data).map((key) =>
-              <div key={key}>{this.props.data[key]}</div>
-      );
-      return (
-              <div>{listRow}</div>
-      );
+    class ForecastList extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+
+        render() {
+            const list = this.props.data.map((obj, index) =>
+                <ForecastListRow key={index} data={obj}></ForecastListRow>
+            );
+            return (
+                <div className="forecast container">
+                    <ForecastListHeader></ForecastListHeader>
+                    <div>{list}</div>
+                </div>
+
+            );
+        }
     }
-  }
 
-  const forecastArr = [
-    {name: "Skövde", startdate: "2020-01-01 00:00:00", enddate: "2020-01-01 06:00:00", periodnr: 0, periodname: "Night", temp: 2, tempUnit: "Celcius", downfalltype: "Snowing", downfallAmount: 30, downfallUnit: "mm", windDirection: "South-East", MPS: 5.1},
-    {name: "Skövde", startdate: "2020-01-01 00:00:00", enddate: "2020-01-01 06:00:00", periodnr: 0, periodname: "Night", temp: 2, tempUnit: "Celcius", downfalltype: "Snowing", downfallAmount: 30, downfallUnit: "mm", windDirection: "South-East", MPS: 5.1},
-    {name: "Skövde", startdate: "2020-01-01 00:00:00", enddate: "2020-01-01 06:00:00", periodnr: 0, periodname: "Night", temp: 2, tempUnit: "Celcius", downfalltype: "Snowing", downfallAmount: 30, downfallUnit: "mm", windDirection: "South-East", MPS: 5.1},
-  ]
+    class ForecastListHeader extends React.Component {
+        constructor(props) {
+            super(props);
+        }
 
-  ReactDOM.render(
-          <App forecastArr={forecastArr}/>,
-          document.getElementById('content')
-  );
+        render() {
+
+            return (
+                <div className="flex forecast-row">
+                    <div>Date</div>
+                    <div>Temp</div>
+                    <div>Downfall</div>
+                    <div>Wind</div>
+                    <div>Airpressure</div>
+                </div>
+            );
+        }
+    }
+
+    class ForecastListRow extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+
+        render() {
+            return (
+                <div className="flex forecast-row">
+                    <div>
+                        <p>{this.props.data["startdate"].split(" ")[0]}</p>
+                        <p>{this.props.data["startdate"].split(" ")[1]} - {this.props.data["enddate"].split(" ")[1]}</p>
+                    </div>
+                    <div><p>{this.props.data["temp"]} {this.props.data["tempUnit"]}</p></div>
+                    <div>
+                        <p>{this.props.data["downfalltype"]}</p>
+                        <p>{this.props.data["downfallAmount"]} {this.props.data["downfallUnit"]}</p>
+                    </div>
+                    <div>
+                        <p>{this.props.data["windDirection"]}</p>
+                        <p>{this.props.data["MPS"]} MPS</p>
+                    </div>
+                    <div>
+                        <p>{this.props.data["airpressureValue"]} {this.props.data["airpressureUnit"]}</p>
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    const forecastArr = [
+        {
+            name: "Skövde",
+            startdate: "2020-01-01 00:00:00",
+            enddate: "2020-01-01 06:00:00",
+            periodnr: 0,
+            periodname: "Night",
+            temp: 2,
+            tempUnit: "Celcius",
+            downfalltype: "Snowing",
+            downfallAmount: 30,
+            downfallUnit: "mm",
+            windDirection: "South-East",
+            MPS: 5.1,
+            airpressureValue: 1259,
+            airpressureUnit: "hPa"
+        },
+        {
+            name: "Skövde",
+            startdate: "2020-01-01 00:00:00",
+            enddate: "2020-01-01 06:00:00",
+            periodnr: 0,
+            periodname: "Night",
+            temp: 2,
+            tempUnit: "Celcius",
+            downfalltype: "Snowing",
+            downfallAmount: 30,
+            downfallUnit: "mm",
+            windDirection: "South-East",
+            MPS: 5.1,
+            airpressureValue: 1259,
+            airpressureUnit: "hPa"
+        },
+        {
+            name: "Skövde",
+            startdate: "2020-01-01 00:00:00",
+            enddate: "2020-01-01 06:00:00",
+            periodnr: 0,
+            periodname: "Night",
+            temp: 2,
+            tempUnit: "Celcius",
+            downfalltype: "Snowing",
+            downfallAmount: 30,
+            downfallUnit: "mm",
+            windDirection: "South-East",
+            MPS: 5.1,
+            airpressureValue: 1259,
+            airpressureUnit: "hPa"
+        },
+    ]
+
+    const info = {
+        name: "Halmstad",
+        type: "Regional capital",
+        country: "Sweden",
+        geolocation: {
+            ALTITUDE: "11",
+            LATITUDE: "56.67446",
+            LONGITUDE: "12.85676",
+            GEOBASE: "geonames",
+            GEOBASEID: "2708365"
+        },
+        about: "Halmstad, at the time part of the Kingdom of Denmark, received its first city charter in 1307, and the city celebrated its 700th anniversary in 2007. The oldest remains of that first town are to be found at Ovraby upstream on Nissan, just south of and quite close to the present day regiment buildings. The remains of the church can still be seen today between a defunct brick industry and a former landfill.In the 1320s the town moved to the present day town centre. At this time there were two monasteries in the town and during the 15th century the St. Nikolai church was built. Halland was the object of numerous battles, sieges and occupations by Swedish troops.",
+        climatecode: "Dfb",
+        climate: "Halmstad has the south Scandinavian variety of the relatively wet humid continental climate (Dfb) with warm summers and cold winters, closely bordering on an oceanic climate (Cfb).",
+        province: "Halland",
+        municipality: "Halmstad Municipality",
+        postalcode: "30x xx",
+        areacode: "(+46) 35"
+    }
+
+    ReactDOM.render(
+        <App forecastArr={forecastArr} info={info}/>,
+        document.getElementById('content')
+    );
 </script>
 </body>
 </html>
