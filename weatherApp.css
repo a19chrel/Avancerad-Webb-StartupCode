@@ -71,11 +71,66 @@ body {
   background-color: white;
   margin-top: 20px;
 }
-.info-box div{
+.info-box div div{
   width: 450px;
 }
 
 .mt-20 {
   margin-top: 20px;
 }
+
+/* Comment */
+.comment-button {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: white;
+  position: fixed;
+  bottom: 25px;
+  right: 50px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.comment-window {
+  width: 300px;
+  height: 525px;
+  background-color: white;
+  position: fixed;
+  bottom: 25px;
+  right: 50px;
+}
+
+.comment-content {
+  width: 300px;
+  height: 400px;
+  background-color: white;
+  position: absolute;
+  top: 25px;
+  overflow-y: scroll;
+  box-sizing: border-box;
+}
+
+.comment-content div {
+  padding: 15px 10px 15px 10px;
+  border-bottom: 1px solid black;
+}
+
+.comment-input {
+  height: 80px;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 280px;
+  resize: none;
+}
+
+.comment-header {
+  display: inline-flex;
+  justify-content: space-between;
+  padding: 0 10px 0 10px;
+  width: calc(100% - 20px);
+}
+
 

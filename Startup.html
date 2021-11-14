@@ -40,6 +40,7 @@
                 <div>
                     <Info data={this.props.info}></Info>
                     <ForecastList data={this.props.forecastArr}></ForecastList>
+                    <Chat comments={this.props.comments}></Chat>
                 </div>
             );
         }
@@ -48,34 +49,57 @@
     class Info extends React.Component {
         constructor(props) {
             super(props);
+            this.state = {
+                infoHidden: false,
+            };
+
+            this.handleClick = this.handleClick.bind(this)
         }
 
+        handleClick = () => {
+            this.setState({
+                infoHidden: !this.state.infoHidden
+            })
+        };
+
         render() {
-            return (
-                    <div className="info-box flex space-between container">
-                      <div>
-                        <h2>{this.props.data.name}</h2>
-                        <p>{this.props.data.province}, {this.props.data.country}</p>
-                        <p>geo info</p>
-                        <p className="mt-20">
-                          <strong>Postalcode: </strong>
-                          {this.props.data.postalcode}
-                        </p>
-                        <p>
-                          <strong>Climatecode: </strong>
-                          {this.props.data.climatecode}
-                        </p>
-                        <p>
-                          <strong>Areacode: </strong>
-                          {this.props.data.areacode}
-                        </p>
-                      </div>
-                      <div>
-                        <p>{this.props.data.about}</p>
-                      </div>
+            if (this.state.infoHidden){
+                return (
+                    <div className="info-box container">
+                        <h2><a onClick={this.handleClick}>{this.props.data.name} (click to hide)</a></h2>
                     </div>
 
-            );
+                );
+            }else {
+                return (
+                    <div className="info-box container">
+                        <h2><a onClick={this.handleClick}>{this.props.data.name} (click to hide)</a></h2>
+                        <div className=" flex space-between">
+                            <div>
+                                <p>{this.props.data.province}, {this.props.data.country}</p>
+                                <p>{this.props.data.geolocation.LATITUDE}° N, {this.props.data.geolocation.LONGITUDE}° E</p>
+                                <p className="mt-20">
+                                    <strong>Postalcode: </strong>
+                                    {this.props.data.postalcode}
+                                </p>
+                                <p>
+                                    <strong>Climatecode: </strong>
+                                    {this.props.data.climatecode}
+                                </p>
+                                <p>
+                                    <strong>Areacode: </strong>
+                                    {this.props.data.areacode}
+                                </p>
+                            </div>
+                            <div>
+                                <p>{this.props.data.about}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                );
+            }
+
         }
     }
 
@@ -146,9 +170,73 @@
         }
     }
 
+    class Chat extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                hideChat: true,
+            };
+
+            this.handleClick = this.handleClick.bind(this)
+        }
+
+        handleClick = () => {
+            this.setState({
+                hideChat: !this.state.hideChat
+            })
+        };
+
+        render() {
+            const commentList = this.props.comments.map((obj, index) =>
+                <Comment key={index}>
+                    <h4>{obj.user}</h4>
+                    <p>Likes: {obj.likes} <a href="#">Like</a></p>
+                    <p>{obj.message}</p>
+                </Comment>
+            );
+
+            if (this.state.hideChat){
+                return (
+                    <div className="comment-button">
+                        <a onClick={this.handleClick}>Comments</a>
+                    </div>
+
+                );
+            }else {
+                return (<div className="comment-window">
+                        <div className="comment-header">
+                            <h3>Comments ({commentList.length})</h3>
+                            <a onClick={this.handleClick}>Close</a>
+                        </div>
+                        <div className="comment-content">
+                            {commentList}
+                        </div>
+                        <textarea className="comment-input" placeholder="Write your comment here.."></textarea>
+                    </div>
+
+                );
+            }
+
+        }
+    }
+
+    class Comment extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+
+        render() {
+            return (
+                <div key="index">
+                    {this.props.children}
+                </div>
+            );
+        }
+    }
+
     const forecastArr = [
         {
-            name: "Skövde",
+            name: "Halmstad",
             startdate: "2020-01-01 00:00:00",
             enddate: "2020-01-01 06:00:00",
             periodnr: 0,
@@ -164,7 +252,7 @@
             airpressureUnit: "hPa"
         },
         {
-            name: "Skövde",
+            name: "Halmstad",
             startdate: "2020-01-01 00:00:00",
             enddate: "2020-01-01 06:00:00",
             periodnr: 0,
@@ -180,7 +268,7 @@
             airpressureUnit: "hPa"
         },
         {
-            name: "Skövde",
+            name: "Halmstad",
             startdate: "2020-01-01 00:00:00",
             enddate: "2020-01-01 06:00:00",
             periodnr: 0,
@@ -196,7 +284,6 @@
             airpressureUnit: "hPa"
         },
     ]
-
     const info = {
         name: "Halmstad",
         type: "Regional capital",
@@ -216,9 +303,15 @@
         postalcode: "30x xx",
         areacode: "(+46) 35"
     }
+    const comments = [
+        {user: "Bengt", likes: 17, message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+        {user: "Berit", likes: 3, message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+        {user: "Greger", likes: 32, message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+        {user: "Karin", likes: 2, message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}
+    ]
 
     ReactDOM.render(
-        <App forecastArr={forecastArr} info={info}/>,
+        <App forecastArr={forecastArr} info={info} comments={comments}/>,
         document.getElementById('content')
     );
 </script>
