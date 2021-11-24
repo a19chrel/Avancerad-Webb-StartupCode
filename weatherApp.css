@@ -48,6 +48,7 @@ body {
 
 .forecast {
   background: white;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   margin-top: 20px;
 }
 
@@ -68,6 +69,7 @@ body {
 
 .info-box {
   padding: 10px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   background-color: white;
   margin-top: 20px;
 }
@@ -81,6 +83,7 @@ body {
 
 /* Comment */
 .comment-button {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -103,6 +106,7 @@ body {
 }
 
 .comment-content {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   width: 300px;
   height: 400px;
   background-color: white;

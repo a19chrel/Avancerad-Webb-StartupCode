@@ -25,9 +25,11 @@
 
     // React since react V4 does not read query parameters so we read query parameter directly
     const urlParams = new URLSearchParams(window.location.search);
-    const ort = urlParams.get('ort');
+    const paramOrt = urlParams.get('ort');
+    var ort;
 
-    if (ort != null) alert(ort);
+    if (paramOrt == null) ort = "Grums";
+    else ort = paramOrt;
 
     //Content element
     class App extends React.Component {
@@ -38,9 +40,9 @@
         render() {
             return (
                 <div>
-                    <Info data={this.props.info}></Info>
-                    <ForecastList data={this.props.forecastArr}></ForecastList>
-                    <Chat comments={this.props.comments}></Chat>
+                    <Info ort={this.props.ort}></Info>
+                    <ForecastList ort={this.props.ort}></ForecastList>
+                    <Chat ort={this.props.ort}></Chat>
                 </div>
             );
         }
@@ -49,9 +51,20 @@
     class Info extends React.Component {
         constructor(props) {
             super(props);
+
+            this.data;
+
             this.state = {
                 infoHidden: false,
+                ortData: null,
             };
+            const response = fetch("/api/Ort.php", {
+                method: 'POST',
+                headers: {'Content-type': 'application/json'},
+                body: JSON.stringify({ort: this.props.ort})
+            }).then(response => response.json().then(data => {
+                this.setState({ortData: data})
+            }))
 
             this.handleClick = this.handleClick.bind(this)
         }
@@ -63,36 +76,41 @@
         };
 
         render() {
-            if (this.state.infoHidden){
+
+            if (!this.state.ortData) return (<div className="info-box container">
+                loading..
+            </div>);
+
+            if (this.state.infoHidden) {
                 return (
                     <div className="info-box container">
-                        <h2><a onClick={this.handleClick}>{this.props.data.name} (click to hide)</a></h2>
+                        <h2><a onClick={this.handleClick}>{this.state.ortData.name} (click to hide)</a></h2>
                     </div>
 
                 );
-            }else {
+            } else {
                 return (
                     <div className="info-box container">
-                        <h2><a onClick={this.handleClick}>{this.props.data.name} (click to hide)</a></h2>
+                        <h2><a onClick={this.handleClick}>{this.state.ortData.name} (click to hide)</a></h2>
                         <div className=" flex space-between">
                             <div>
-                                <p>{this.props.data.province}, {this.props.data.country}</p>
-                                <p>{this.props.data.geolocation.LATITUDE}° N, {this.props.data.geolocation.LONGITUDE}° E</p>
+                                <p>{this.state.ortData.province}, {this.state.ortData.country}</p>
+                                <p>{this.state.ortData.geodata.LATITUDE}° N, {this.state.ortData.geodata.LONGITUDE}° E</p>
                                 <p className="mt-20">
                                     <strong>Postalcode: </strong>
-                                    {this.props.data.postalcode}
+                                    {this.state.ortData.postalcode}
                                 </p>
                                 <p>
                                     <strong>Climatecode: </strong>
-                                    {this.props.data.climatecode}
+                                    {this.state.ortData.climatecode}
                                 </p>
                                 <p>
                                     <strong>Areacode: </strong>
-                                    {this.props.data.areacode}
+                                    {this.state.ortData.areacode}
                                 </p>
                             </div>
                             <div>
-                                <p>{this.props.data.about}</p>
+                                <p>{this.state.ortData.about}</p>
                             </div>
                         </div>
                     </div>
@@ -106,10 +124,31 @@
     class ForecastList extends React.Component {
         constructor(props) {
             super(props);
+
+            this.state = {
+                forecastData: null,
+            }
+
+            const response = fetch("/api/Forecast.php", {
+                method: 'POST',
+                headers: {'Content-type': 'application/json'},
+                body: JSON.stringify({ort: this.props.ort})
+            }).then(response => response.json().then(data => {
+                this.setState({forecastData: data})
+            }));
+
         }
 
         render() {
-            const list = this.props.data.map((obj, index) =>
+
+            if (!this.state.forecastData) return (
+                <div className="forecast container">
+                    <ForecastListHeader></ForecastListHeader>
+                    <div>Loading..</div>
+                </div>
+            );;
+
+            const list = this.state.forecastData.map((obj, index) =>
                 <ForecastListRow key={index} data={obj}></ForecastListRow>
             );
             return (
@@ -117,7 +156,6 @@
                     <ForecastListHeader></ForecastListHeader>
                     <div>{list}</div>
                 </div>
-
             );
         }
     }
@@ -150,20 +188,20 @@
             return (
                 <div className="flex forecast-row">
                     <div>
-                        <p>{this.props.data["startdate"].split(" ")[0]}</p>
-                        <p>{this.props.data["startdate"].split(" ")[1]} - {this.props.data["enddate"].split(" ")[1]}</p>
+                        <p>{this.props.data["fromtime"].split(" ")[0]}</p>
+                        <p>{this.props.data["fromtime"].split(" ")[1]} - {this.props.data["totime"].split(" ")[1]}</p>
                     </div>
-                    <div><p>{this.props.data["temp"]} {this.props.data["tempUnit"]}</p></div>
+                    <div><p>{this.props.data.forecast["TVALUE"]} {this.props.data.forecast["TUNIT"]}</p></div>
                     <div>
-                        <p>{this.props.data["downfalltype"]}</p>
-                        <p>{this.props.data["downfallAmount"]} {this.props.data["downfallUnit"]}</p>
-                    </div>
-                    <div>
-                        <p>{this.props.data["windDirection"]}</p>
-                        <p>{this.props.data["MPS"]} MPS</p>
+                        <p>{this.props.data.forecast["FNAME"]}</p>
+                        <p>{this.props.data.forecast["RVALUE"]} {this.props.data.forecast["RUNIT"]}</p>
                     </div>
                     <div>
-                        <p>{this.props.data["airpressureValue"]} {this.props.data["airpressureUnit"]}</p>
+                        <p>{this.props.data.forecast["CODE"]}</p>
+                        <p>{this.props.data.forecast["MPS"]} MPS</p>
+                    </div>
+                    <div>
+                        <p>{this.props.data.forecast["VALUE"]} {this.props.data.forecast["UNIT"]}</p>
                     </div>
                 </div>
             );
@@ -175,7 +213,17 @@
             super(props);
             this.state = {
                 hideChat: true,
+                commentsData: null
             };
+
+            const response = fetch("/api/Comments.php", {
+                method: 'POST',
+                headers: {'Content-type': 'application/json'},
+                body: JSON.stringify({ort: this.props.ort})
+            }).then(response => response.json().then(data => {
+                console.log("Comments", data)
+                this.setState({commentsData: data})
+            }));
 
             this.handleClick = this.handleClick.bind(this)
         }
@@ -187,22 +235,24 @@
         };
 
         render() {
-            const commentList = this.props.comments.map((obj, index) =>
+            if (!this.state.commentsData) return null;
+
+            const commentList = this.state.commentsData.map((obj, index) =>
                 <Comment key={index}>
-                    <h4>{obj.user}</h4>
-                    <p>Likes: {obj.likes} <a href="#">Like</a></p>
-                    <p>{obj.message}</p>
+                    <h4>{obj.username} [{obj.posted}]</h4>
+                    <p>Likes: {obj.nolikes} <a href="#">Like</a></p>
+                    <p>{obj.content}</p>
                 </Comment>
             );
 
-            if (this.state.hideChat){
+            if (this.state.hideChat) {
                 return (
                     <div className="comment-button">
                         <a onClick={this.handleClick}>Comments</a>
                     </div>
 
                 );
-            }else {
+            } else {
                 return (<div className="comment-window">
                         <div className="comment-header">
                             <h3>Comments ({commentList.length})</h3>
@@ -234,84 +284,8 @@
         }
     }
 
-    const forecastArr = [
-        {
-            name: "Halmstad",
-            startdate: "2020-01-01 00:00:00",
-            enddate: "2020-01-01 06:00:00",
-            periodnr: 0,
-            periodname: "Night",
-            temp: 2,
-            tempUnit: "Celcius",
-            downfalltype: "Snowing",
-            downfallAmount: 30,
-            downfallUnit: "mm",
-            windDirection: "South-East",
-            MPS: 5.1,
-            airpressureValue: 1259,
-            airpressureUnit: "hPa"
-        },
-        {
-            name: "Halmstad",
-            startdate: "2020-01-01 00:00:00",
-            enddate: "2020-01-01 06:00:00",
-            periodnr: 0,
-            periodname: "Night",
-            temp: 2,
-            tempUnit: "Celcius",
-            downfalltype: "Snowing",
-            downfallAmount: 30,
-            downfallUnit: "mm",
-            windDirection: "South-East",
-            MPS: 5.1,
-            airpressureValue: 1259,
-            airpressureUnit: "hPa"
-        },
-        {
-            name: "Halmstad",
-            startdate: "2020-01-01 00:00:00",
-            enddate: "2020-01-01 06:00:00",
-            periodnr: 0,
-            periodname: "Night",
-            temp: 2,
-            tempUnit: "Celcius",
-            downfalltype: "Snowing",
-            downfallAmount: 30,
-            downfallUnit: "mm",
-            windDirection: "South-East",
-            MPS: 5.1,
-            airpressureValue: 1259,
-            airpressureUnit: "hPa"
-        },
-    ]
-    const info = {
-        name: "Halmstad",
-        type: "Regional capital",
-        country: "Sweden",
-        geolocation: {
-            ALTITUDE: "11",
-            LATITUDE: "56.67446",
-            LONGITUDE: "12.85676",
-            GEOBASE: "geonames",
-            GEOBASEID: "2708365"
-        },
-        about: "Halmstad, at the time part of the Kingdom of Denmark, received its first city charter in 1307, and the city celebrated its 700th anniversary in 2007. The oldest remains of that first town are to be found at Ovraby upstream on Nissan, just south of and quite close to the present day regiment buildings. The remains of the church can still be seen today between a defunct brick industry and a former landfill.In the 1320s the town moved to the present day town centre. At this time there were two monasteries in the town and during the 15th century the St. Nikolai church was built. Halland was the object of numerous battles, sieges and occupations by Swedish troops.",
-        climatecode: "Dfb",
-        climate: "Halmstad has the south Scandinavian variety of the relatively wet humid continental climate (Dfb) with warm summers and cold winters, closely bordering on an oceanic climate (Cfb).",
-        province: "Halland",
-        municipality: "Halmstad Municipality",
-        postalcode: "30x xx",
-        areacode: "(+46) 35"
-    }
-    const comments = [
-        {user: "Bengt", likes: 17, message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-        {user: "Berit", likes: 3, message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-        {user: "Greger", likes: 32, message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-        {user: "Karin", likes: 2, message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}
-    ]
-
     ReactDOM.render(
-        <App forecastArr={forecastArr} info={info} comments={comments}/>,
+        <App ort={ort}/>,
         document.getElementById('content')
     );
 </script>
