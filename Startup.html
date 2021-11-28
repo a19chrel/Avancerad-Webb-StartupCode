@@ -58,10 +58,8 @@
                 infoHidden: false,
                 ortData: null,
             };
-            const response = fetch("/api/Ort.php", {
-                method: 'POST',
+            const response = fetch(`https://workshop.elmhall.dev:3002/info/${this.props.ort}`, {
                 headers: {'Content-type': 'application/json'},
-                body: JSON.stringify({ort: this.props.ort})
             }).then(response => response.json().then(data => {
                 this.setState({ortData: data})
             }))
@@ -129,10 +127,9 @@
                 forecastData: null,
             }
 
-            const response = fetch("/api/Forecast.php", {
-                method: 'POST',
+            const response = fetch(`https://workshop.elmhall.dev:3002/forecast/${this.props.ort}`, {
+                method: 'GET',
                 headers: {'Content-type': 'application/json'},
-                body: JSON.stringify({ort: this.props.ort})
             }).then(response => response.json().then(data => {
                 this.setState({forecastData: data})
             }));
@@ -216,10 +213,9 @@
                 commentsData: null
             };
 
-            const response = fetch("/api/Comments.php", {
-                method: 'POST',
+            const response = fetch(`https://workshop.elmhall.dev:3002/comments/${this.props.ort}`, {
+                method: 'GET',
                 headers: {'Content-type': 'application/json'},
-                body: JSON.stringify({ort: this.props.ort})
             }).then(response => response.json().then(data => {
                 console.log("Comments", data)
                 this.setState({commentsData: data})
